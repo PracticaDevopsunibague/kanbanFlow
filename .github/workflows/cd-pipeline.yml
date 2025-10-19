@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    # environment:
+    #   name: 'Production'
+    #   url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
     # Tarea 1: Agregar artifact (extraer archivos) y configurar
