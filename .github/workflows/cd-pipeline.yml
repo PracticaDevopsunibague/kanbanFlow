@@ -1,8 +1,6 @@
 name: CD Pipeline - Deploy to Azure
 
 on:
-  push:
-    branches: [ main ]
   workflow_run:
     workflows: ["CI Pipeline - Build and Test"]
     types:
@@ -12,7 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     environment:
       name: 'Production'
@@ -21,11 +19,12 @@ jobs:
     steps:
     # Tarea 1: Agregar artifact (extraer archivos) y configurar
     - name: Download artifact from CI pipeline
-      uses: actions/download-artifact@v4
+      uses: dawidd6/action-download-artifact@v3
       with:
         name: kanbanflow-build
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        run-id: ${{ github.event.workflow_run.id }}
+        workflow: ci-pipeline.yml
+        run_id: ${{ github.event.workflow_run.id }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Extract deployment package
       run: |
