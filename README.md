@@ -26,59 +26,156 @@ Sistema de gestión de proyectos con tableros Kanban desarrollado con Django (ba
 - React Beautiful DnD
 - Axios
 
-## Instalación
+## 🚀 Instalación y Configuración Local
 
-### Backend
+### Prerrequisitos
 
-1. Navegar al directorio backend:
+Antes de comenzar, asegúrate de tener instalado:
+
+- **Python 3.8 o superior** - [Descargar Python](https://www.python.org/downloads/)
+- **Node.js 16 o superior** - [Descargar Node.js](https://nodejs.org/)
+- **Git** - [Descargar Git](https://git-scm.com/)
+
+### 📥 Paso 1: Clonar el Repositorio
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd kanbanFlow
+```
+
+### 🐍 Paso 2: Configurar el Backend (Django)
+
+#### 2.1 Navegar al directorio backend
 ```bash
 cd backend
 ```
 
-2. Crear entorno virtual:
+#### 2.2 Crear y activar entorno virtual
+
+**En Windows:**
 ```bash
 python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate
 ```
 
-3. Instalar dependencias:
+**En Linux/Mac:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### 2.3 Instalar dependencias de Python
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Ejecutar migraciones:
+#### 2.4 Configurar la base de datos
 ```bash
-python manage.py makemigrations
+# Crear migraciones para las apps
+python manage.py makemigrations authentication projects tasks
+
+# Aplicar migraciones
 python manage.py migrate
 ```
 
-5. Crear superusuario (opcional):
+#### 2.5 (Opcional) Crear superusuario para admin
 ```bash
 python manage.py createsuperuser
 ```
 
-6. Ejecutar servidor:
+#### 2.6 Iniciar el servidor backend
 ```bash
 python manage.py runserver
 ```
 
-### Frontend
+✅ **El backend estará disponible en:** `http://localhost:8000`
 
-1. Navegar al directorio frontend:
+---
+
+### ⚛️ Paso 3: Configurar el Frontend (React)
+
+**Abrir una nueva terminal** (mantener la del backend abierta)
+
+#### 3.1 Navegar al directorio frontend
 ```bash
 cd frontend
 ```
 
-2. Instalar dependencias:
+#### 3.2 Instalar dependencias de Node.js
 ```bash
 npm install
 ```
 
-3. Ejecutar aplicación:
+#### 3.3 Iniciar la aplicación React
 ```bash
 npm start
 ```
+
+✅ **El frontend estará disponible en:** `http://localhost:3000`
+
+---
+
+### 🎯 Paso 4: Verificar la Instalación
+
+1. **Abrir el navegador** y ir a `http://localhost:3000`
+2. **Registrar un nuevo usuario** o iniciar sesión
+3. **Crear un proyecto** usando el botón "Nuevo Proyecto"
+4. **Añadir tareas** al proyecto
+5. **Probar el drag & drop** arrastrando tareas entre columnas
+6. **Hacer click en una tarea** para ver sus detalles
+
+---
+
+### 🔧 Solución de Problemas Comunes
+
+#### Error: "python no se reconoce como comando"
+- **Windows:** Usar `py` en lugar de `python`
+- **Linux/Mac:** Usar `python3` en lugar de `python`
+
+#### Error: "npm no se reconoce como comando"
+- Reinstalar Node.js desde [nodejs.org](https://nodejs.org/)
+- Reiniciar la terminal después de la instalación
+
+#### Error: "Puerto ya en uso"
+- **Backend (8000):** Cambiar puerto con `python manage.py runserver 8001`
+- **Frontend (3000):** Cambiar puerto cuando npm pregunte, o usar `npm start -- --port 3001`
+
+#### Error: "Módulo no encontrado"
+- **Backend:** Verificar que el entorno virtual esté activado
+- **Frontend:** Ejecutar `npm install` nuevamente
+
+---
+
+### 📱 Comandos Rápidos para Desarrollo
+
+#### Reiniciar todo desde cero:
+```bash
+# Backend
+cd backend
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux/Mac
+python manage.py runserver
+
+# Frontend (nueva terminal)
+cd frontend
+npm start
+```
+
+#### Ver logs del backend:
+- Los logs aparecen automáticamente en la terminal donde ejecutaste `runserver`
+
+#### Acceder al panel de administración:
+- Ir a `http://localhost:8000/admin`
+- Usar las credenciales del superusuario creado
+
+---
+
+### 🌐 URLs Importantes
+
+- **Aplicación Principal:** `http://localhost:3000`
+- **API Backend:** `http://localhost:8000/api/`
+- **Panel Admin Django:** `http://localhost:8000/admin/`
+- **Documentación API:** `http://localhost:8000/api/` (endpoints listados abajo)
 
 ## Uso
 
@@ -87,6 +184,7 @@ npm start
 3. Crea un nuevo proyecto
 4. Añade tareas al proyecto
 5. Arrastra y suelta las tareas entre columnas (Pendiente, En Progreso, Completado)
+6. Haz click en cualquier tarea para ver sus detalles completos
 
 ## API Endpoints
 
