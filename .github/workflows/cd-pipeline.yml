@@ -79,13 +79,18 @@ jobs:
     # Verificar secret de Azure
     - name: Check Azure credentials
       run: |
+        echo "Checking Azure publish profile..."
         if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
-          echo "ERROR: AZURE_WEBAPP_PUBLISH_PROFILE secret not found!"
+          echo "❌ ERROR: AZURE_WEBAPP_PUBLISH_PROFILE secret not found!"
           echo "Please add the publish profile to GitHub secrets."
+          echo "Secret length: 0"
           exit 1
         else
-          echo "Azure credentials found ✓"
+          echo "✅ Azure credentials found"
+          echo "Secret length: ${#AZURE_WEBAPP_PUBLISH_PROFILE}"
         fi
+      env:
+        AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         
     # Tarea 6: Agregar tarea a stage (deploy azure)
     - name: Deploy to Azure Web App
