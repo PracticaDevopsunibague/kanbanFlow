@@ -1,0 +1,84 @@
+name: CI Pipeline - Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Tarea 1: Descargar dependencias - Python y Node.js
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Set up Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    # Instalar dependencias del backend
+    - name: Install Python dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    # Instalar dependencias del frontend
+    - name: Install Node.js dependencies
+      run: |
+        cd frontend
+        npm ci
+        
+    # Ejecutar tests del backend
+    - name: Run Python tests
+      run: |
+        cd backend
+        python manage.py test
+        
+    # Ejecutar tests del frontend
+    - name: Run Node.js tests
+      run: |
+        cd frontend
+        npm test -- --coverage --watchAll=false
+        
+    # Build del frontend
+    - name: Build React app
+      run: |
+        cd frontend
+        npm run build
+        
+    # Tarea 2: Copiar archivos
+    - name: Copy files for deployment
+      run: |
+        mkdir -p deployment-package
+        cp -r backend/* deployment-package/
+        cp -r frontend/build deployment-package/static-files/
+        
+    # Tarea 3: Configurar .zip
+    - name: Create deployment structure
+      run: |
+        cd deployment-package
+        # Crear estructura para Azure App Service
+        echo "Preparing deployment package..."
+        ls -la
+        
+    # Tarea 4: Generar artifact (.zip)
+    - name: Create deployment artifact
+      run: |
+        zip -r kanbanflow-deployment.zip deployment-package/
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: kanbanflow-build
+        path: kanbanflow-deployment.zip
+        retention-days: 30
