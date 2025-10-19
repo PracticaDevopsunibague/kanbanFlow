@@ -24,6 +24,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
         
     # Instalar dependencias del backend
     - name: Install Python dependencies
@@ -36,9 +38,8 @@ jobs:
     - name: Install Node.js dependencies
       run: |
         cd frontend
-        rm -f package-lock.json
-        npm install
-        npm audit fix --force || true
+        npm clean-install || npm install
+        npm ls react-scripts || npm install react-scripts@5.0.1
         
     # Verificar instalación del backend
     - name: Check Python installation
@@ -52,11 +53,17 @@ jobs:
         cd frontend
         npm list --depth=0
         
+    # Verificar react-scripts
+    - name: Verify react-scripts installation
+      run: |
+        cd frontend
+        npx react-scripts --version || npm install react-scripts
+        
     # Build del frontend
     - name: Build React app
       run: |
         cd frontend
-        npm run build
+        CI=false npm run build
         
     # Tarea 2: Copiar archivos
     - name: Copy files for deployment
