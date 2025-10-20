@@ -119,7 +119,27 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# Logging para Azure
+# Optimizaciones de rendimiento
+USE_TZ = True
+USE_I18N = False  # Desactivar si no necesitas internacionalización
+
+# Cache en memoria para sesiones
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+# Cache simple en memoria
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
+    }
+}
+
+# Logging optimizado
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -130,13 +150,6 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
+        'level': 'WARNING',  # Solo warnings y errores
     },
 }

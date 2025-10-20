@@ -3,20 +3,23 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import models
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from .models import Task
 from .serializers import TaskSerializer
 from kanbanflow.apps.projects.models import Project
 
+@method_decorator(cache_page(30), name='list')  # Cache por 30 segundos
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [AllowAny]
-    queryset = Task.objects.all()
+    queryset = Task.objects.select_related('project', 'created_by').order_by('-created_at')
     
     def get_queryset(self):
         project_id = self.request.query_params.get('project', None)
         if project_id:
-            return Task.objects.filter(project_id=project_id)
-        return Task.objects.all()
+            return Task.objects.select_related('project', 'created_by').filter(project_id=project_id).order_by('-created_at')
+        return Task.objects.select_related('project', 'created_by').order_by('-created_at')
     
     def perform_create(self, serializer):
         from django.contrib.auth.models import User

@@ -6,10 +6,27 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 10000, // 10 segundos timeout
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Interceptor para mostrar loading
+api.interceptors.request.use((config) => {
+  // Agregar timestamp para evitar cache del navegador
+  config.params = { ...config.params, _t: Date.now() };
+  return config;
+});
+
+// Interceptor para manejar errores
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 export const authAPI = {
   login: (credentials) => api.post('/auth/login/', credentials),
