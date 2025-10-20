@@ -97,7 +97,12 @@ urlpatterns = [
     path('api/auth/', include('kanbanflow.apps.authentication.urls')),
     path('api/projects/', include('kanbanflow.apps.projects.urls')),
     path('api/tasks/', include('kanbanflow.apps.tasks.urls')),
-    path('', serve_react_app, name='react_app'),
+]
+
+# Catch-all pattern para React Router - debe ir al final
+from django.urls import re_path
+urlpatterns += [
+    re_path(r'^.*$', serve_react_app, name='react_app'),
 ]
 
 # Servir archivos estáticos de React en producción

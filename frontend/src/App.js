@@ -25,13 +25,23 @@ const PublicRoute = ({ children }) => {
   return user ? <Navigate to="/dashboard" /> : children;
 };
 
+const HomeRedirect = () => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+  }
+  
+  return user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
+};
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<HomeRedirect />} />
             <Route 
               path="/login" 
               element={
