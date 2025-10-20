@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from django.conf import settings
 
 def api_root(request):
     return JsonResponse({
@@ -10,6 +11,15 @@ def api_root(request):
             'auth': '/api/auth/',
             'projects': '/api/projects/',
             'tasks': '/api/tasks/'
+        },
+        'debug': {
+            'installed_apps': list(settings.INSTALLED_APPS),
+            'test_endpoints': {
+                'auth_register': '/api/auth/register/',
+                'auth_login': '/api/auth/login/',
+                'projects_list': '/api/projects/',
+                'tasks_list': '/api/tasks/'
+            }
         }
     })
 
