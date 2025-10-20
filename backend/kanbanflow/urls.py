@@ -37,11 +37,36 @@ def api_status(request):
         }
     })
 
+def debug_info(request):
+    import sys
+    from django.db import connection
+    
+    try:
+        # Test database connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        db_status = "OK"
+    except Exception as e:
+        db_status = f"Error: {str(e)}"
+    
+    return JsonResponse({
+        'python_version': sys.version,
+        'django_version': settings.DEBUG,
+        'database_status': db_status,
+        'installed_apps': settings.INSTALLED_APPS,
+        'environment_vars': {
+            'DB_NAME': os.environ.get('DB_NAME', 'Not set'),
+            'DB_HOST': os.environ.get('DB_HOST', 'Not set'),
+            'DB_USER': os.environ.get('DB_USER', 'Not set'),
+        }
+    })
+
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api_status, name='api_status'),
+    path('api/debug/', debug_info, name='debug_info'),
     path('api/auth/', include('kanbanflow.apps.authentication.urls')),
     path('api/projects/', include('kanbanflow.apps.projects.urls')),
     path('api/tasks/', include('kanbanflow.apps.tasks.urls')),
