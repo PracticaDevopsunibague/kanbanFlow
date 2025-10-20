@@ -49,7 +49,7 @@ jobs:
         echo "Configuring deployment files..."
         
         # Crear startup command para Azure
-        echo "gunicorn --bind=0.0.0.0 --timeout 600 kanbanflow.wsgi" > startup.txt
+        echo "python manage.py migrate && gunicorn --bind=0.0.0.0 --timeout 600 kanbanflow.wsgi" > startup.txt
         
         # Crear requirements.txt si no existe
         if [ ! -f requirements.txt ]; then
