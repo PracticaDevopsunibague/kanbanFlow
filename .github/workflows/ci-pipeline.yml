@@ -71,6 +71,8 @@ jobs:
         mkdir -p deployment-package
         cp -r backend/* deployment-package/
         cp -r frontend/build deployment-package/static-files/
+        # Asegurar que startup.py esté incluido
+        cp backend/startup.py deployment-package/ 2>/dev/null || echo "startup.py already copied"
         
     # Tarea 3: Configurar .zip
     - name: Create deployment structure

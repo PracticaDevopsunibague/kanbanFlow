@@ -48,8 +48,8 @@ jobs:
         # Configurar archivos para Azure
         echo "Configuring deployment files..."
         
-        # Crear startup command para Azure
-        echo "python manage.py migrate && gunicorn --bind=0.0.0.0 --timeout 600 kanbanflow.wsgi" > startup.txt
+        # Usar startup.py para Azure
+        echo "python startup.py" > startup.txt
         
         # Crear requirements.txt si no existe
         if [ ! -f requirements.txt ]; then
