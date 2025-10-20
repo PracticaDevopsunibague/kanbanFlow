@@ -13,7 +13,7 @@ def serve_react_app(request):
                 return HttpResponse(f.read(), content_type='text/html')
     except:
         pass
-    
+    #prueba
     try:
         # Servir template temporal
         template_path = os.path.join(settings.BASE_DIR, 'templates', 'index.html')
