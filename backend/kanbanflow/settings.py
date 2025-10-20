@@ -61,10 +61,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME', default='defaultdb'),
-        'USER': config('DB_USER', default='avnadmin'),
-        'PASSWORD': config('DB_PASSWORD', default='AVNS_4qVOLRs1teIv5ImQbm3'),
-        'HOST': config('DB_HOST', default='pg-1356e9d3-stivensac1212.b.aivencloud.com'),
-        'PORT': config('DB_PORT', default='26194'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
         'OPTIONS': {
             'sslmode': 'require',
         },
