@@ -72,7 +72,11 @@ jobs:
         cp -r backend/* deployment-package/
         # Copiar build de React al directorio correcto
         mkdir -p deployment-package/static-files
-        cp -r frontend/build/* deployment-package/static-files/
+        if [ -d "frontend/build" ]; then
+          cp -r frontend/build/* deployment-package/static-files/
+        else
+          echo "React build not found, using template"
+        fi
         # Asegurar que startup.py esté incluido
         cp backend/startup.py deployment-package/ 2>/dev/null || echo "startup.py already copied"
         

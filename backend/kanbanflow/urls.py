@@ -1,17 +1,29 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
-from django.shortcuts import render
-from django.views.generic import TemplateView
 import os
 
-class ReactAppView(TemplateView):
-    template_name = 'index.html'
+def serve_react_app(request):
+    try:
+        # Intentar servir React build
+        index_path = os.path.join(settings.BASE_DIR, 'static-files', 'index.html')
+        if os.path.exists(index_path):
+            with open(index_path, 'r', encoding='utf-8') as f:
+                return HttpResponse(f.read(), content_type='text/html')
+    except:
+        pass
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    try:
+        # Servir template temporal
+        template_path = os.path.join(settings.BASE_DIR, 'templates', 'index.html')
+        if os.path.exists(template_path):
+            with open(template_path, 'r', encoding='utf-8') as f:
+                return HttpResponse(f.read(), content_type='text/html')
+    except:
+        pass
+    
+    return HttpResponse("KanbanFlow - Error loading page")
 
 def api_status(request):
     return JsonResponse({
@@ -31,5 +43,5 @@ urlpatterns = [
     path('api/auth/', include('kanbanflow.apps.authentication.urls')),
     path('api/projects/', include('kanbanflow.apps.projects.urls')),
     path('api/tasks/', include('kanbanflow.apps.tasks.urls')),
-    path('', ReactAppView.as_view(), name='react_app'),
+    path('', serve_react_app, name='react_app'),
 ]
