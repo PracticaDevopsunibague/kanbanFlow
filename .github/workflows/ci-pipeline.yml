@@ -70,7 +70,9 @@ jobs:
       run: |
         mkdir -p deployment-package
         cp -r backend/* deployment-package/
-        cp -r frontend/build deployment-package/static-files/
+        # Copiar build de React al directorio correcto
+        mkdir -p deployment-package/static-files
+        cp -r frontend/build/* deployment-package/static-files/
         # Asegurar que startup.py esté incluido
         cp backend/startup.py deployment-package/ 2>/dev/null || echo "startup.py already copied"
         
