@@ -61,12 +61,39 @@ def debug_info(request):
         }
     })
 
+def test_register(request):
+    from django.contrib.auth.models import User
+    import traceback
+    
+    try:
+        # Test simple user creation
+        test_data = {
+            'username': 'testuser123',
+            'email': 'test@test.com',
+            'password': 'testpass123'
+        }
+        
+        user = User.objects.create_user(**test_data)
+        user.delete()  # Clean up
+        
+        return JsonResponse({
+            'status': 'OK',
+            'message': 'User creation test passed'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'ERROR',
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        })
+
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api_status, name='api_status'),
     path('api/debug/', debug_info, name='debug_info'),
+    path('api/test-register/', test_register, name='test_register'),
     path('api/auth/', include('kanbanflow.apps.authentication.urls')),
     path('api/projects/', include('kanbanflow.apps.projects.urls')),
     path('api/tasks/', include('kanbanflow.apps.tasks.urls')),
