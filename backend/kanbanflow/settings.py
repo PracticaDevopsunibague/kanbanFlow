@@ -56,21 +56,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kanbanflow.wsgi.application'
 
-# Base de datos
-if config('DATABASE_URL', default=None):
-    # Producción - PostgreSQL
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(config('DATABASE_URL'))
+# Base de datos PostgreSQL
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='defaultdb'),
+        'USER': config('DB_USER', default='avnadmin'),
+        'PASSWORD': config('DB_PASSWORD', default='AVNS_4qVOLRs1teIv5ImQbm3'),
+        'HOST': config('DB_HOST', default='pg-1356e9d3-stivensac1212.b.aivencloud.com'),
+        'PORT': config('DB_PORT', default='26194'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
-else:
-    # Desarrollo - SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
