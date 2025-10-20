@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
+  ? 'https://kanbanflow-gng0cycmg3arazgf.canadacentral-01.azurewebsites.net/api' 
   : 'http://localhost:8000/api';
 
 const api = axios.create({
