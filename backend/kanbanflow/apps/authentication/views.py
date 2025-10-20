@@ -5,9 +5,16 @@ from rest_framework.response import Response
 from django.contrib.auth import login, logout
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def register(request):
+    if request.method == 'GET':
+        return Response({
+            'message': 'Endpoint de registro',
+            'method': 'POST',
+            'fields': ['username', 'password', 'email', 'first_name', 'last_name']
+        })
+    
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
@@ -17,9 +24,16 @@ def register(request):
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def login_view(request):
+    if request.method == 'GET':
+        return Response({
+            'message': 'Endpoint de login',
+            'method': 'POST',
+            'fields': ['username', 'password']
+        })
+    
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.validated_data['user']
