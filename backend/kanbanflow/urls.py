@@ -37,6 +37,8 @@ def api_status(request):
         }
     })
 
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api_status, name='api_status'),
@@ -45,3 +47,8 @@ urlpatterns = [
     path('api/tasks/', include('kanbanflow.apps.tasks.urls')),
     path('', serve_react_app, name='react_app'),
 ]
+
+# Servir archivos estáticos de React en producción
+if settings.DEBUG or True:  # Forzar en producción para React
+    urlpatterns += static('/static/', document_root=os.path.join(settings.BASE_DIR, 'static-files', 'static'))
+    urlpatterns += static('/', document_root=os.path.join(settings.BASE_DIR, 'static-files'))

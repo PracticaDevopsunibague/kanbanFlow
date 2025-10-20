@@ -82,10 +82,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Configuración para servir React
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static-files'),
+    os.path.join(BASE_DIR, 'static-files', 'static'),
 ]
 
 # Templates para React
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'static-files')]
+
+# Configuración adicional para WhiteNoise con React
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
