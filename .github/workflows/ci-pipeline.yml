@@ -58,5 +58,46 @@ jobs:
       run: |
         cd frontend
         npx react-scripts --version || npm install react-scripts
+              
+    # Build del frontend
+    - name: Build React app
+      run: |
+        cd frontend
+        CI=false npm run build
         
+    # Tarea 2: Copiar archivos
+    - name: Copy files for deployment
+      run: |
+        mkdir -p deployment-package
+        cp -r backend/* deployment-package/
+        # Copiar build de React al directorio correcto
+        mkdir -p deployment-package/static-files
+        if [ -d "frontend/build" ]; then
+          cp -r frontend/build/* deployment-package/static-files/
+        else
+          echo "React build not found, using template"
+        fi
+        # Asegurar que startup.py esté incluido
+        cp backend/startup.py deployment-package/ 2>/dev/null || echo "startup.py already copied"
+        
+    # Tarea 3: Configurar .zip
+    - name: Create deployment structure
+      run: |
+        cd deployment-package
+        # Crear estructura para Azure App Service
+        echo "Preparing deployment package..."
+        ls -la
+        
+    # Tarea 4: Generar artifact (.zip)
+    - name: Create deployment artifact
+      run: |
+        zip -r kanbanflow-deployment.zip deployment-package/
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: kanbanflow-build
+        path: kanbanflow-deployment.zip
+        retention-days: 30
+
 
