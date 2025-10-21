@@ -59,3 +59,63 @@ jobs:
         # Verificar estructura de archivos
         echo "Deployment structure:"
         find . -type f -name "*.py" | head -10
+
+ # Tarea 4: Crear cuenta azure (ya existe)
+    - name: Azure Account Configuration
+      run: |
+        echo "=== AZURE ACCOUNT DETAILS ==="
+        echo "Subscription: Azure for Students"
+        echo "Subscription ID: 9eef1f12-411b-4b3e-acf6-8707ba0c451b"
+        echo "Resource Group: DefaultResourceGroup-CQ"
+        echo "Location: Canada Central"
+        echo "============================="
+        
+    # Tarea 5: Crear sitio azure (ya existe)
+    - name: Azure App Service Details
+      run: |
+        echo "=== AZURE APP SERVICE ==="
+        echo "App Name: kanbanflow"
+        echo "URL: https://kanbanflow-gng0cycmg3arazgf.canadacentral-01.azurewebsites.net"
+        echo "Runtime: Python 3.10"
+        echo "OS: Linux"
+        echo "Plan: Basic (B1)"
+        echo "========================"
+        
+    # Verificar secret de Azure
+    - name: Check Azure credentials
+      run: |
+        echo "Checking Azure publish profile..."
+        if [ -z "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}" ]; then
+          echo "❌ ERROR: AZURE_WEBAPP_PUBLISH_PROFILE secret not found!"
+          echo "Please add the publish profile to GitHub secrets."
+          echo "Secret length: 0"
+          exit 1
+        else
+          echo "✅ Azure credentials found"
+          echo "Secret length: ${#AZURE_WEBAPP_PUBLISH_PROFILE}"
+        fi
+      env:
+        AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        
+    # Tarea 6: Agregar tarea a stage (deploy azure)
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'kanbanflow'
+        slot-name: 'Production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: './deployment-package'
+        
+    # Verificación post-deployment
+    - name: Post-deployment verification
+      run: |
+        echo "=== DEPLOYMENT COMPLETED ==="
+        echo "Application URL: https://kanbanflow-gng0cycmg3arazgf.canadacentral-01.azurewebsites.net"
+        echo "Deployment Status: Success"
+        echo "Timestamp: $(date)"
+        echo "============================"
+        
+        # Verificar que el sitio responda
+        sleep 30
+        curl -f https://kanbanflow-gng0cycmg3arazgf.canadacentral-01.azurewebsites.net || echo "Site not ready yet"
