@@ -1,0 +1,61 @@
+name: CD Pipeline - Deploy to Azure
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline - Build and Test"]
+    types:
+      - completed
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    # environment:
+    #   name: 'Production'
+    #   url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+    # Tarea 1: Agregar artifact (extraer archivos) y configurar
+    - name: Download artifact from CI pipeline
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        name: kanbanflow-build
+        workflow: ci-pipeline.yml
+        run_id: ${{ github.event.workflow_run.id }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Extract deployment package
+      run: |
+        unzip kanbanflow-deployment.zip
+        ls -la deployment-package/
+        
+    # Tarea 2: Agregar stage (empty job) y configurar
+    - name: Prepare deployment stage
+      run: |
+        echo "=== DEPLOYMENT STAGE CONFIGURATION ==="
+        echo "Environment: Production"
+        echo "Target: Azure App Service"
+        echo "App Name: kanbanflow"
+        echo "Resource Group: DefaultResourceGroup-CQ"
+        echo "========================================="
+        
+    # Tarea 3: Agregar tarea a stage (extraer archivo-tarea) y configurar
+    - name: Configure deployment files
+      run: |
+        cd deployment-package
+        # Configurar archivos para Azure
+        echo "Configuring deployment files..."
+        
+        # Usar startup.py para Azure
+        echo "python startup.py" > startup.txt
+        
+        # Crear requirements.txt si no existe
+        if [ ! -f requirements.txt ]; then
+          cp ../requirements.txt .
+        fi
+        
+        # Verificar estructura de archivos
+        echo "Deployment structure:"
+        find . -type f -name "*.py" | head -10
