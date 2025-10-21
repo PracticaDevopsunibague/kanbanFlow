@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
@@ -14,46 +14,83 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
+      setError(null);
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setUser(null);
+        return;
+      }
+      
       const response = await authAPI.getProfile();
       setUser(response.data);
     } catch (error) {
+      localStorage.removeItem('authToken');
       setUser(null);
+      setError('Sesión expirada');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (credentials) => {
-    const response = await authAPI.login(credentials);
-    setUser(response.data.user);
-    return response.data;
-  };
+  const login = useCallback(async (credentials) => {
+    try {
+      setError(null);
+      const response = await authAPI.login(credentials);
+      const { user: userData, token } = response.data;
+      
+      localStorage.setItem('authToken', token);
+      setUser(userData);
+      return response.data;
+    } catch (error) {
+      setError('Credenciales inválidas');
+      throw error;
+    }
+  }, []);
 
-  const register = async (userData) => {
-    const response = await authAPI.register(userData);
-    setUser(response.data.user);
-    return response.data;
-  };
+  const register = useCallback(async (userData) => {
+    try {
+      setError(null);
+      const response = await authAPI.register(userData);
+      const { user: newUser, token } = response.data;
+      
+      localStorage.setItem('authToken', token);
+      setUser(newUser);
+      return response.data;
+    } catch (error) {
+      setError('Error al registrar usuario');
+      throw error;
+    }
+  }, []);
 
-  const logout = async () => {
-    await authAPI.logout();
-    setUser(null);
-  };
+  const logout = useCallback(async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      localStorage.removeItem('authToken');
+      setUser(null);
+      setError(null);
+    }
+  }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     login,
     register,
     logout,
     loading,
-  };
+    error,
+    isAuthenticated: !!user
+  }), [user, login, register, logout, loading, error]);
 
   return (
     <AuthContext.Provider value={value}>

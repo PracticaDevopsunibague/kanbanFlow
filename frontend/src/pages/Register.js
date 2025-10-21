@@ -10,9 +10,8 @@ const Register = () => {
     first_name: '',
     last_name: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register, error } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,13 +21,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       await register(formData);
       navigate('/dashboard');
     } catch (error) {
-      setError('Error al registrar usuario');
+      // Error is handled by AuthContext
     } finally {
       setLoading(false);
     }
